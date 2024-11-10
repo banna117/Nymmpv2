@@ -13,6 +13,12 @@ public class Question {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String questionText;
 
-    @Column(nullable = false)
-    private Boolean isInitial;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", nullable = false)
+    private User made_by;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "groupId",nullable = false)
+    private Group group;
+
 }

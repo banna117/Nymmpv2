@@ -1,7 +1,6 @@
 package com.example.nymmpv2.model;
 
 import lombok.*;
-
 import jakarta.persistence.*;
 
 @Getter
@@ -33,11 +32,10 @@ public class User {
     private Long kakaoId;
 
     @Builder
-    public User(Long userId, String email, String password, String username, Group group, Long kakaoId) {
-        this.userId = userId;
+    public User(String email, String username, String password, Group group, Long kakaoId) {
         this.email = email;
-        this.password = password;
         this.username = username;
+        this.password = password;
         this.group = group;
         this.kakaoId = kakaoId;
     }

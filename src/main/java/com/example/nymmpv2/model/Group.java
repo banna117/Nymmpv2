@@ -4,13 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@ToString
-@Table(name = "`groups`")
+@Data
 public class Group {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT")
@@ -22,10 +18,4 @@ public class Group {
     @Column(length = 20, nullable = false,unique = true)
     private String groupHashCode;
 
-    @Builder
-    public Group(Long groupId, String groupName,String groupHashCode) {
-        this.groupId = groupId;
-        this.groupName = groupName;
-        this.groupHashCode = groupHashCode;
-    }
 }
