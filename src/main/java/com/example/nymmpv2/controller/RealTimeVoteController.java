@@ -2,8 +2,12 @@ package com.example.nymmpv2.controller;
 
 import com.example.nymmpv2.dto.vote.RoomCreationRequestDto;
 import com.example.nymmpv2.dto.vote.RoomCreationResponseDto;
+import com.example.nymmpv2.dto.vote.RoomJoinRequestDto;
+import com.example.nymmpv2.dto.vote.RoomJoinResponseDto;
+import com.example.nymmpv2.model.Group;
 import com.example.nymmpv2.model.Room;
 import com.example.nymmpv2.service.RealTimeVoteService;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -35,6 +39,21 @@ public class RealTimeVoteController {
         return voteService.calculateRealTimeResults(userVote.getPollId());
     }
 
+    // REST API 엔드포인트 - 방 참여
+    @PostMapping("/join-room")
+    public RoomJoinResponseDto joinRoom(@RequestBody RoomJoinRequestDto roomJoinRequestDto) {
+        // 방에 참여 요청
+        return voteService.joinRoom(roomJoinRequestDto.getRoomCode(),roomJoinRequestDto.getUser());
+
+    }
+    // WebSocket 엔드포인트 - 방 정보 업데이트 브로드캐스트
+    @MessageMapping("/update-room/{roomCode}")
+    @SendTo("/topic/room-updates/{roomCode}")
+    public Room broadcastRoomUpdate(@DestinationVariable String roomCode) {
+        Room updatedRoom = voteService.getRoomByCode(roomCode);
+        return updatedRoom;
+    }
+
     // REST API 엔드포인트 - 방 만들기
     @PostMapping("/create-room")
     public RoomCreationResponseDto makeRoom(@RequestBody RoomCreationRequestDto request) {
@@ -42,7 +61,8 @@ public class RealTimeVoteController {
         voteService.makeRoom(request.getGroup(), request.getMaster());
 
         // 방 생성 후 생성된 Room 가져오기
-        Room createdRoom = voteService.getRoomByGroup(request.getGroup());
+        // HOW?
+        Room createdRoom = voteService.getRoomByCode(request.getGroup());
 
         // 응답 DTO 생성 후 반환
         return new RoomCreationResponseDto(

@@ -1,7 +1,9 @@
 package com.example.nymmpv2.service;
 
+import com.example.nymmpv2.dto.vote.RoomJoinResponseDto;
 import com.example.nymmpv2.model.Group;
 
+import com.example.nymmpv2.model.Question;
 import com.example.nymmpv2.model.Room;
 import com.example.nymmpv2.model.User;
 import org.springframework.stereotype.Service;
@@ -15,11 +17,12 @@ import java.util.UUID;
 public class RealTimeVoteService extends AbstractVoteService {
 
     // 현재 활성화된 그룹 <groupcode, Room> 모아놓기
-    private final Map<Group, Room> liveGroups = new HashMap<>();
-    // 방 만들기
-    // Group - 이미 존재하는 그룹 또는 임시 그룹
+    private final Map<String, Room> liveGroups = new HashMap<>();
 
-    // 방 생성 메서드
+    // Room 검색
+    public Room getRoomByCode(String roomCode) {return liveGroups.get(roomCode);}
+
+    // 방 만들기
     public void makeRoom(Group group, User master) {
         // 방 이름 기본값 설정: Username의 그룹
         String roomName = master.getUsername() + "의 그룹";
@@ -36,15 +39,27 @@ public class RealTimeVoteService extends AbstractVoteService {
         // 방을 liveGroups 맵에 추가
         liveGroups.put(group, room);
     }
-
-    // Room 검색 메서드
-    public Room getRoomByGroup(Group group) {
-        return liveGroups.get(group);
+    // 방 참여 메소드
+    public RoomJoinResponseDto joinRoom(String roomCode, User participant) {
+        Room room = liveGroups.get(roomCode);
+        if (room == null) {
+            return new RoomJoinResponseDto(null, "Can't join Room");
+        }
+        room.addParticipant(participant);
+        return new RoomJoinResponseDto(room,"joined room");
     }
+
 
     @Override
     public VoteResponseDto startVote(VoteRequestDto voteRequestDto) {
-        // 새로운 투표 생성 로직
+        // room 내부의
+        Room room = getRoomByGroup(voteRequestDto.getGroup());
+        List<Question> questions = room.getQuestions();
+
+        for (Question question : questions) {
+
+        }
+        for (getRoomByGroup().getQuestions())
         VoteResponseDto response = new VoteResponseDto();
         response.setPollId(voteRequestDto.getPollId());
         response.setMessage("Vote started successfully!");
