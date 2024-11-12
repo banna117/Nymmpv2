@@ -1,9 +1,6 @@
 package com.example.nymmpv2.controller;
 
-import com.example.nymmpv2.dto.vote.RoomCreationRequestDto;
-import com.example.nymmpv2.dto.vote.RoomCreationResponseDto;
-import com.example.nymmpv2.dto.vote.RoomJoinRequestDto;
-import com.example.nymmpv2.dto.vote.RoomJoinResponseDto;
+import com.example.nymmpv2.dto.vote.*;
 import com.example.nymmpv2.model.Group;
 import com.example.nymmpv2.model.Room;
 import com.example.nymmpv2.service.RealTimeVoteService;
@@ -58,11 +55,11 @@ public class RealTimeVoteController {
     @PostMapping("/create-room")
     public RoomCreationResponseDto makeRoom(@RequestBody RoomCreationRequestDto request) {
         // Room 만들기
-        voteService.makeRoom(request.getGroup(), request.getMaster());
+        String roomCode = voteService.makeRoom(request.getGroup(), request.getMaster());
 
         // 방 생성 후 생성된 Room 가져오기
         // HOW?
-        Room createdRoom = voteService.getRoomByCode(request.getGroup());
+        Room createdRoom = voteService.getRoomByCode(roomCode);
 
         // 응답 DTO 생성 후 반환
         return new RoomCreationResponseDto(
@@ -70,5 +67,14 @@ public class RealTimeVoteController {
                 createdRoom.getCode(),
                 createdRoom.getStatus().name()
         );
+    }
+    //질문 추가
+    @PostMapping("/add-question")
+    public String addQuestion(@RequestBody AddQuestionRequestDto request){
+        if(voteService.addQuestion(request.getRoomCode(), request.getQuestion()).equals("Added question")){
+            broadcastRoomUpdate(request.getRoomCode());
+            return "Added question";
+        }
+
     }
 }

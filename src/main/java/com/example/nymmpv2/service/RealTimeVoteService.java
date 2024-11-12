@@ -23,7 +23,7 @@ public class RealTimeVoteService extends AbstractVoteService {
     public Room getRoomByCode(String roomCode) {return liveGroups.get(roomCode);}
 
     // 방 만들기
-    public void makeRoom(Group group, User master) {
+    public String makeRoom(Group group, User master) {
         // 방 이름 기본값 설정: Username의 그룹
         String roomName = master.getUsername() + "의 그룹";
         // 고유 방 코드 생성
@@ -37,7 +37,8 @@ public class RealTimeVoteService extends AbstractVoteService {
         room.addParticipant(master);
 
         // 방을 liveGroups 맵에 추가
-        liveGroups.put(group, room);
+        liveGroups.put(roomCode, room);
+        return roomCode;
     }
     // 방 참여 메소드
     public RoomJoinResponseDto joinRoom(String roomCode, User participant) {
@@ -48,7 +49,17 @@ public class RealTimeVoteService extends AbstractVoteService {
         room.addParticipant(participant);
         return new RoomJoinResponseDto(room,"joined room");
     }
-
+    //질문 추가 메소드
+    public String addQuestion(String roomCode,Question question){
+        Room room = liveGroups.get(roomCode);
+        if (room == null) {
+            return "Cannot get Room by code";
+        }
+        if(room.addQuestion(question)){
+            return "Added question";
+        }
+        return "Cannot add question to Room";
+    }
 
     @Override
     public VoteResponseDto startVote(VoteRequestDto voteRequestDto) {

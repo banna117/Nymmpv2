@@ -32,8 +32,8 @@ public class Room {
     }
 
     // 질문 추가
-    public void addQuestion(Question question) {
-        questions.add(question);
+    public boolean addQuestion(Question question) {
+        return questions.add(question);
     }
 
     // 현재 질문 설정
