@@ -18,11 +18,11 @@ public class UserResponse {
     @Column(columnDefinition = "BIGINT")
     private Long responseId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "poll_id", nullable = false)
     private Poll poll;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

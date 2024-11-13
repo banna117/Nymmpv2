@@ -20,7 +20,7 @@ public class Poll {
     @JoinColumn(name = "groupId",nullable = false)
     private Group group;
 
-    //투표 옵션 타입 (1: 전체, 2: Yes/No, 3: 랜덤 4명) 등등
+    //투표 옵션 타입 (1: 전체, 2: Yes/No, 3: 랜덤 4명)
     @Column(columnDefinition = "TINYINT", nullable = false)
     private Integer optionType;
 

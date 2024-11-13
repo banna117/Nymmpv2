@@ -1,6 +1,5 @@
-package com.example.nymmpv2.dto.vote;
+package com.example.nymmpv2.dto.room;
 
-import com.example.nymmpv2.model.Group;
 import com.example.nymmpv2.model.User;
 
 public class RoomJoinRequestDto {

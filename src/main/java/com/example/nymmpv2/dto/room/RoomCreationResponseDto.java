@@ -1,4 +1,4 @@
-package com.example.nymmpv2.dto.vote;
+package com.example.nymmpv2.dto.room;
 
 // RoomCreationResponseDto.java
 public class RoomCreationResponseDto {

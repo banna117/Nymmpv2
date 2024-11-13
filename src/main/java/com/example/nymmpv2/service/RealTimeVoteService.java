@@ -1,15 +1,13 @@
 package com.example.nymmpv2.service;
 
-import com.example.nymmpv2.dto.vote.RoomJoinResponseDto;
-import com.example.nymmpv2.model.Group;
+import com.example.nymmpv2.dto.room.RoomJoinResponseDto;
+import com.example.nymmpv2.dto.vote.VoteRequestDto;
+import com.example.nymmpv2.dto.vote.VoteResponseDto;
+import com.example.nymmpv2.model.*;
 
-import com.example.nymmpv2.model.Question;
-import com.example.nymmpv2.model.Room;
-import com.example.nymmpv2.model.User;
 import org.springframework.stereotype.Service;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 
 
 //TODO: 인원, 방 제거 로직 생각하기
@@ -46,31 +44,45 @@ public class RealTimeVoteService extends AbstractVoteService {
         if (room == null) {
             return new RoomJoinResponseDto(null, "Can't join Room");
         }
-        room.addParticipant(participant);
-        return new RoomJoinResponseDto(room,"joined room");
+        if(room.addParticipant(participant)){
+            return new RoomJoinResponseDto(room,"joined room");
+        }else{
+            return new RoomJoinResponseDto(null, "Can't join Room");
+        }
+
     }
     //질문 추가 메소드
-    public String addQuestion(String roomCode,Question question){
+    public String addQuestion(String roomCode,Poll poll){
         Room room = liveGroups.get(roomCode);
         if (room == null) {
             return "Cannot get Room by code";
         }
-        if(room.addQuestion(question)){
+        if(room.addPoll(poll)){
             return "Added question";
         }
         return "Cannot add question to Room";
+    }
+    public List<Poll> getPolls(String roomCode){
+        Room room = liveGroups.get(roomCode);
+        if (room == null) {
+            return new ArrayList<>();
+        }
+        return room.getPolls();
     }
 
     @Override
     public VoteResponseDto startVote(VoteRequestDto voteRequestDto) {
         // room 내부의
-        Room room = getRoomByGroup(voteRequestDto.getGroup());
+        Room room = getRoomByCode(voteRequestDto.getRoomCode());
+        // room status 변경하기
+        if(room.getStatus()==RoomStatus.WAITING || room.getStatus()==RoomStatus.DONE){
+            room.setStatus(RoomStatus.VOTING);
+        }
+        // 첫번째 question 을 현재 question으로 설정
+        room.setCurrentQuestion(room.getPolls().get(0).getQuestion());
+
         List<Question> questions = room.getQuestions();
 
-        for (Question question : questions) {
-
-        }
-        for (getRoomByGroup().getQuestions())
         VoteResponseDto response = new VoteResponseDto();
         response.setPollId(voteRequestDto.getPollId());
         response.setMessage("Vote started successfully!");
